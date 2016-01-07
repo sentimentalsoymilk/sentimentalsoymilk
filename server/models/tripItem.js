@@ -7,6 +7,6 @@ var tripsItemsSchema = mongoose.Schema({
   category: String,
 });
 
-var TripItem = mongoose.model('TripItem', commentSchema);
-module.exports = Comment;
+var TripItem = mongoose.model('TripItem', tripsItemsSchema);
+module.exports = TripItem;
 
