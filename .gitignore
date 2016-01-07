@@ -24,7 +24,7 @@ coverage
 build/
 dist/
 
-# Dependency directorys
+# Dependency Directories
 # Deployed apps should consider commenting these lines out:
 # see https://npmjs.org/doc/faq.html#Should-I-check-my-node_modules-folder-into-git
 node_modules/
@@ -36,3 +36,6 @@ lib/
 .floobit
 .floo
 .flooignore
+
+## API keys
+client/env/config.js
