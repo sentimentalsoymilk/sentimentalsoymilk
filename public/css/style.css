@@ -16,3 +16,8 @@ li.itineraies-li {
 .navigation {
   height: 50px;
 }
+li.foursquare-li {
+  list-style: none;
+  border: 1px solid black;
+  border-radius: 20px;
+}
