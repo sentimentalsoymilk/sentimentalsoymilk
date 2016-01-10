@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 
 var tripsSchema = mongoose.Schema({
   name: String,
-  destination: String,
+  destination: Array,
   //keyword: drinking, bars
   //users
   activities : [{ type: mongoose.Schema.ObjectId,

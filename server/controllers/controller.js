@@ -52,7 +52,13 @@ module.exports = {
     });
   },
   createTrip: function(req, res, next) {
-    Trips.create(req.body, function(err, results) {
+    console.log(req.body);
+    var playlist = {
+      name: req.body.name,
+      destination: [req.body.city, req.body.state],
+      activities: req.body.activities
+    };
+    Trips.create(playlist, function(err, results) {
       if (err) {
         console.log(err);
       }

@@ -88,7 +88,7 @@ angular.module('app.services',[])
       $location.path('/myTrips');
     })
     .catch(function(err){
-      console.log("Error Creating Trip: ", err)
+      console.log("Error Creating Trip: ", err);
     })
   };
 
