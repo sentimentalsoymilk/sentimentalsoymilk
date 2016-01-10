@@ -35,10 +35,10 @@ module.exports = {
             return results;
           }
         }) 
-        .then(function(){
+        .then(function(result){
           req.session.user = username;
           console.log("User created by SignUp");
-          res.send(newUser);
+          res.send(result);
         })
       }
     })
@@ -49,8 +49,9 @@ module.exports = {
     var password = req.body.password;
     console.log("Logging in user", req.body)
     User.findOne({username:username},function(err, result){
-      if (err) {
+      if (err || !result) {
         console.log("Error finding username verifyUser", err)
+        res.send(result);
       } else {
         console.log("Result of user find in login", result)
         result.comparePassword(password, function(err, found) {
@@ -67,10 +68,38 @@ module.exports = {
         });
 
       }
-    })
-    .then(function(users) {
-    
     });
+  },
+
+  find : function(req, res, next) {
+    var username = req.url.split('/')[3]
+    User.findOne({username:username},function(err, result){
+      if (err) {
+        console.log("Error finding username:", err);
+      } else {
+        console.log("Found:", result)
+        res.send(result);
+      }
+    });
+  },
+
+  addTrips : function(req, res, next) {
+    console.log("Hit addTrips")
+    var username = req.url.split('/')[3];
+    User.findOne({username:username},function(err, result){
+      if (err) {
+        console.log("Error finding username:", err);
+      } else {
+        console.log("Update with:", req)
+        console.log("addTrips result", result)
+        res.send(result);
+      }
+    });
+  },
+
+
+  logout : function(req, res, next) {
+    req.logout();
   }
 };
 

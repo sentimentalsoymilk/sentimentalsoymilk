@@ -1,39 +1,44 @@
-angular.module('app.auth', [])
+angular.module('app.auth', ['app.services'])
 
-.controller('AuthController', function ($scope, $http, $location) {
+.controller('AuthController', function ($scope, $http, $location, Auth) {
 
 
   // login function to be called when input form submitted
-  $scope.login = function () {
+  $scope.login = function (user) {
     $scope.error = '';
-    var userData = {
-      "username":$scope.username,
-      "password":$scope.password
-    }
+    if(!user) {
+      var userData = {
+        "username":$scope.username,
+        "password":$scope.password
+      }
+    } 
     console.log("Attempting to login", userData)
-    $http.post('/api/login', userData)
-      .then(function(result){
-        if(result.data){
-          //redirect to my trips
-          $location.path("/myTrips");
-        } else {
-          //stay on login
-          $scope.error = "Please Try Again"
-        }
+    Auth.login(userData)
+      .then(function(message){
+          $scope.clearFields();
+          $scope.error = message;
       })
   };
 
   // sign up function to be called when input form submitted
   $scope.signup = function () {
+    $scope.signUpError = '';
     var userData = {
       "username":$scope.signUpUsername,
       "password":$scope.signUpPassword
     }
     console.log('User entered signup data',userData)
-    $http.post('/api/signup', userData)
-    .then(function(result){
-      console.log("Successfully created user", result);
-      //redirect
+    Auth.signup(userData)
+    .then(function(message){
+      $scope.clearFields();
+      $scope.signUpError = message;
     })
+  };
+
+  $scope.clearFields = function (){
+    $scope.signUpUsername='';
+    $scope.signUpPassword='';
+    $scope.username='';
+    $scope.password='';
   };
 })

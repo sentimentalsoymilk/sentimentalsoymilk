@@ -4,6 +4,7 @@ angular.module('app.services',[])
   var data = {};
   data.searchedCity = {};
   data.cityCache = {};
+  $scope.user = {};
 
   data.getActivities = function(city){
     //checks if the city has been searched before
@@ -110,10 +111,59 @@ angular.module('app.services',[])
   return data;
 })
 
-// .factory('AuthData', function($http){
-//   $http.post('/login', userData)
-//     .success(function () {
-      
-//   })
+.factory('Auth', function($http, $location){
+  var auth = {};
+  auth.user = { password : '' };
+  auth.pass = '';
 
-// });
+  auth.clearPassword = function() {
+    auth.user.password = '';
+    auth.pass = '';
+  };
+
+  auth.login = function(user) {
+    return $http.post('/api/login', user)
+      .then(function(result){
+        console.log("Auth Login Hit")
+        if(result.data){
+          console.log("login results", result)
+          console.log("Username", user.username)
+          auth.getUser(user.username)
+          .then(function() {
+            auth.clearPassword();
+            $location.path("/myTrips");
+          });
+        } else {
+          //stay on login
+          var loginError = "Please Try Again"
+          return loginError;
+        }
+      })
+  };
+
+  auth.signup = function(userData) {
+    auth.pass = userData.password;
+    return $http.post('/api/signup', userData)
+    .then(function(result){
+      if(Array.isArray(result.data)){
+        var signUpError = "Username Taken";
+        return signUpError;
+      } else {
+        auth.user = result.data;
+        auth.user.password = auth.pass;
+        auth.login(auth.user);
+      }
+      //redirect
+    })
+  };
+
+  auth.getUser = function(username) {
+    return $http.get('/api/user/'+ username)
+    .then(function(result){
+      console.log("Result of getUser", result.data)
+      auth.user = result.data;
+    })
+  };
+
+  return auth;
+});

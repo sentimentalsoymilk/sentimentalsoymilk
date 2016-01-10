@@ -4,6 +4,5 @@ angular.module('app.mytrips', ['app.services'])
   ActivitiesData.getTrips()
   .then(function(results){
     $scope.tripResults = results.data;
-    console.log(results.data);
   })
 })
