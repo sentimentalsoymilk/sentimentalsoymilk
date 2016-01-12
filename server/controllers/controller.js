@@ -2,16 +2,16 @@
 var Trips = require('../models/trips.js');
 var TripItems = require('../models/tripItem.js');
 var request = require('request');
-var key = require('../env/config')
+var key = require('../env/config');
 var async = require('async');
 
 
 
 var filterTripData = function(responseObj) {
-  return responseObj.reduce(function(totalData, item) { 
+  return responseObj.reduce(function(totalData, item) {
     var location = item.venue.location;
     var photoURL = item.venue.featuredPhotos.items[0];
-    var notes = item.tips === undefined ? '' : item.tips[0].text; 
+    var notes = item.tips === undefined ? '' : item.tips[0].text;
     var tripItem = {
       name: item.venue.name,
       address: location.address + ', ' + location.city + ', ' + location.state + ' - ' + location.cc,
@@ -22,7 +22,7 @@ var filterTripData = function(responseObj) {
       photo: photoURL.prefix + '300x300' + photoURL.suffix,
       url: item.venue.url
     };
-    totalData.push(tripItem); 
+    totalData.push(tripItem);
     return totalData;
   }, []);
 };
@@ -30,8 +30,8 @@ var filterTripData = function(responseObj) {
 
 
 // <h4> parseCityName </h4>
-// Accepts the decoded request url, reformats it and 
-// returns a string of the city name 
+// Accepts the decoded request url, reformats it and
+// returns a string of the city name
 var parseCityName = function(cityRequest) {
     var cityLowercase = cityRequest.split(',')[0];
     var city = '';
@@ -47,11 +47,11 @@ var parseCityName = function(cityRequest) {
 }
 
 module.exports = {
-  //<h4> searchStoredData </h4> 
-  // Parses the city name from the request url param and 
+  //<h4> searchStoredData </h4>
+  // Parses the city name from the request url param and
   // checks to see if our database containss that city.
-  // If we have a record for that city that is sent in the response, 
-  // otherwise fetch directly from the foursquare API using <h4> fetchCityData </h4> 
+  // If we have a record for that city that is sent in the response,
+  // otherwise fetch directly from the foursquare API using <h4> fetchCityData </h4>
   // and response with the API data
   // Method: GET
   // Route : /activities/*'
@@ -76,8 +76,8 @@ module.exports = {
     });
   },
 
-  //<h4> fetchCityData </h4> 
-  // Fetches data from the Foursquare API if the data is not 
+  //<h4> fetchCityData </h4>
+  // Fetches data from the Foursquare API if the data is not
   // already stored in our database
   // Method: GET
   // Route : /activities/*'
@@ -85,7 +85,7 @@ module.exports = {
     var cityState = req.url.split('/')[2];
     return request('https://api.foursquare.com/v2/venues/explore?client_id='+key.API+'&client_secret='+key.SECRET+'&v=20130815&near='+cityState+'&venuePhotos=1', function(err, response, body) {
       // prevent server crashing when responseObj is undefined
-      if (!err && JSON.parse(body).meta.code === 200) { 
+      if (!err && JSON.parse(body).meta.code === 200) {
         var filteredResults = filterTripData(JSON.parse(body).response.groups[0].items);
         module.exports.saveCityData(filteredResults).then(function(results, err) {
           if (err) {
@@ -97,10 +97,10 @@ module.exports = {
         res.status(400).send(err);
       }
     });
-  }, 
+  },
 
 
-  //<h4>  saveCityData </h4> 
+  //<h4>  saveCityData </h4>
   // Adds the searched city to the database
   // Model: TripItems
   saveCityData: function(results, next) {
@@ -108,10 +108,10 @@ module.exports = {
       if (err) {
         console.log(err);
       }
-    });    
+    });
   },
 
-  //<h4> createTrip </h4> 
+  //<h4> createTrip </h4>
   // Accepts a JSON object to be stored.
   // Example : tripObj = {
     //   name: name,
@@ -138,7 +138,7 @@ module.exports = {
     });
   },
 
-  //<h3> GetAllTrips </h3> 
+  //<h3> GetAllTrips </h3>
   // Returns a JSON of all the data present in the database
   // Method: Get
   // Route : /trips
@@ -149,7 +149,7 @@ module.exports = {
     });
   },
 
-  //<h3> accessTrip </h3> 
+  //<h3> accessTrip </h3>
     // Returns a trip object with name, destination, and actitivites properties
     // Acitivties is an array
     // Method: Get
@@ -159,9 +159,9 @@ module.exports = {
     var fullActivities = {};
     fullActivities.list = [];
     Trips.findById({ _id: tripId }, function(err, trip) {
-      if (err) { 
+      if (err) {
         console.log("findById error", err)
-        return err; 
+        return err;
       } else {
         console.log("FindbyID Results", trip);
         return trip;
@@ -179,7 +179,7 @@ module.exports = {
             fullActivities.list.push(trip);
             if(activityLength === fullActivities.list.length){
               res.send(fullActivities);
-            } 
+            }
           }
         });
       });
