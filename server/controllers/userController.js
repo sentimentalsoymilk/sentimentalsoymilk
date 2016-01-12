@@ -6,7 +6,7 @@ var request = require('request');
 var bluebird = require('bluebird');
 
 module.exports = {
-  
+
   authCheck : function(req, res, next){
     if(req.isAuthenticated()) { return next(); }
     res.redirect('/login');
@@ -35,7 +35,7 @@ module.exports = {
             console.log("Created user", results)
             return results;
           }
-        }) 
+        })
         .then(function(result){
           req.session.user = username;
           console.log("User created by SignUp");
@@ -43,6 +43,45 @@ module.exports = {
         })
       }
     })
+  },
+
+  storeUser: function(igProfile, token) {
+    var userObj = {};
+
+    userObj.id = igProfile.id;
+    userObj.image = igProfile._json.data.profile_picture;
+    userObj.username = igProfile.username;
+    userObj.token = token;
+
+    console.log('userobj', userObj);
+
+    User.find({id: igProfile.id}, function(err, success) {
+      if (err) {
+        console.log('user already exists', err);
+      } else {
+        return success;
+      }
+    })
+    .then(function(success) {
+      if (success.length !== 0) {
+        console.log('sending back found user', success);
+        //res.send(success);
+      } else {
+        User.create(userObj, function(err, results) {
+          if (err) {
+            console.log('Error creating user', err);
+          } else {
+            console.log('Created user', results);
+            return results;
+          }
+        });
+        // .then(function(result) {
+        //   req.session.user = username;
+        //   console.log("User created by SignUp");
+        //   res.send(result);
+        // });
+      }
+    });
   },
 
   login : function(req, res, next) {
@@ -88,9 +127,9 @@ module.exports = {
     var userId = req.url.split('/')[4];
     var myTrips = [];
     User.findById({ _id: userId }, function(err, user) {
-      if (err) { 
+      if (err) {
         console.log("findById error", err)
-        return err; 
+        return err;
       } else {
         console.log("findbyID Results", trip);
         return user;
@@ -108,7 +147,7 @@ module.exports = {
             if(tripLength === myTrips.length){
               console.log("myTrip:", myTrips)
               res.send(myTrips);
-            } 
+            }
           }
         });
       });
@@ -135,7 +174,7 @@ module.exports = {
             console.log(err);
           }
           res.send(result);
-        });       
+        });
       }
     });
   },
@@ -146,4 +185,3 @@ module.exports = {
   }
 };
 
-     
