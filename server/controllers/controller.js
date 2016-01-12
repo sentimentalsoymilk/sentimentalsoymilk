@@ -4,8 +4,20 @@ var TripItems = require('../models/tripItem.js');
 var request = require('request');
 var key = require('../env/config');
 var async = require('async');
+var yelp = require('../env/yelp').yelp
 
-
+yelp.search({
+  term: "Activity",
+  location: "San Francisco"
+}).then(function (data) {
+  console.log(data.businesses[0].categories)
+}).catch(function (err) {
+  if (err.type === yelp.errorTypes.areaTooLarge) {
+    // ..
+  } else if (err.type === yelp.errorTypes.unavailableForLocation) {
+    // ..
+  }
+});
 
 var filterTripData = function(responseObj) {
   return responseObj.reduce(function(totalData, item) {
@@ -81,6 +93,8 @@ module.exports = {
   // already stored in our database
   // Method: GET
   // Route : /activities/*'
+
+  //don't need to store data, poor design choice
   fetchCityData: function(req, res, next) {
     var cityState = req.url.split('/')[2];
     return request('https://api.foursquare.com/v2/venues/explore?client_id='+key.API+'&client_secret='+key.SECRET+'&v=20130815&near='+cityState+'&venuePhotos=1', function(err, response, body) {
