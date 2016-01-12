@@ -13,9 +13,9 @@ yelp.search({
   console.log(data.businesses[0].categories)
 }).catch(function (err) {
   if (err.type === yelp.errorTypes.areaTooLarge) {
-    // ..
+    console.log(err)
   } else if (err.type === yelp.errorTypes.unavailableForLocation) {
-    // ..
+    console.log(err)
   }
 });
 
