@@ -163,6 +163,7 @@ module.exports = {
       if (err) {
         console.log(err);
       }
+      console.log('about to create playlist', playlist, 'user', req.user.username);
       res.json(results);
     });
   },

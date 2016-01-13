@@ -53,7 +53,7 @@ module.exports = {
     userObj.username = igProfile.username;
     userObj.token = token;
 
-    console.log('userobj', userObj);
+    //console.log('userobj', userObj);
 
     User.find({id: igProfile.id}, function(err, success) {
       if (err) {
@@ -82,6 +82,17 @@ module.exports = {
         // });
       }
     });
+  },
+
+  fetchIGPhotos: function(req, res, next) {
+    console.log('req user', req.user.token);
+    var token = req.user.token;
+    var igURL = 'https://API.instagram.com/v1/locations/search?lat=48.858844&lng=2.294351&access_token='+ token;
+    request(igURL, function(err, response, body) {
+      res.send(body);
+      console.log(body);
+    });
+    //res.status(200).send();
   },
 
   login : function(req, res, next) {
