@@ -58,10 +58,10 @@ module.exports = function(app, express) {
     });
 
  //###### Live but not used in production############
-  app.get('/api/user/*', userController.findUser);
+  //app.get('/api/user/*', userController.findUser);
   app.get('/api/ig', userController.fetchIGPhotos);
-  app.put('/api/user/*', userController.addTrips);
-  app.get('/api/user/trips/*', userController.findAllUserTrips);
+  //app.put('/api/user/*', userController.addTrips);
+  //app.get('/api/user/trips/*', userController.findAllUserTrips);
 
 
   //############Pending Routes#####################

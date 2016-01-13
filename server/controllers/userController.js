@@ -121,17 +121,17 @@ module.exports = {
       }
     });
   },
-  findUser: function(req, res, next) {
-    var username = req.url.split('/')[3]
-    User.findOne({username:username},function(err, result){
-      if (err) {
-        console.log("Error finding username:", err);
-      } else {
-        console.log("Found:", result)
-        res.send(result);
-      }
-    });
-  },
+  // findUser: function(req, res, next) {
+  //   var username = req.url.split('/')[3]
+  //   User.findOne({username:username},function(err, result){
+  //     if (err) {
+  //       console.log("Error finding username:", err);
+  //     } else {
+  //       console.log("Found:", result)
+  //       res.send(result);
+  //     }
+  //   });
+  // },
 
   findAllUserTrips: function(req, res, next) {
     console.log("userID", req);
@@ -168,25 +168,35 @@ module.exports = {
   // findOneUserTrip): function(req, res, next) {
   // },
 
-  addTrips : function(req, res, next) {
-    var userId = req.url.split('/')[3];
-    User.findById({ _id: userId },function(err, result){
+  // addTrips : function(req, res, next) {
+  //   var userId = req.url.split('/')[3];
+  //   User.findById({ _id: userId },function(err, result){
+  //     if (err) {
+  //       console.log("Error finding username:", err);
+  //     } else {
+  //       var newTrips = req.body.trips;
+  //       var currentTrips = result.trips;
+  //       newTrips.forEach(function(trip){
+  //         currentTrips.push(trip);
+  //       })
+  //       result.trips = currentTrips;
+  //       result.save(function(err) {
+  //         if (err) {
+  //           console.log(err);
+  //         }
+  //         res.send(result);
+  //       });
+  //     }
+  //   });
+  // },
+
+  addTrip: function(user, id) {
+    return User.findOne({username: user}, function(err, foundUser) {
       if (err) {
-        console.log("Error finding username:", err);
-      } else {
-        var newTrips = req.body.trips;
-        var currentTrips = result.trips;
-        newTrips.forEach(function(trip){
-          currentTrips.push(trip);
-        })
-        result.trips = currentTrips;
-        result.save(function(err) {
-          if (err) {
-            console.log(err);
-          }
-          res.send(result);
-        });
+        return err;
       }
+      foundUser.trips.push(id);
+      foundUser.save();
     });
   },
 
