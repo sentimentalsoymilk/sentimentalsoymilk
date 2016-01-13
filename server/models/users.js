@@ -8,7 +8,7 @@ var UserSchema = mongoose.Schema({
   username: String,
   image: String,
   trips: [{ type: mongoose.Schema.ObjectId, ref: 'Trip'}],
-  token: String 
+  token: String
 });
 
 // UserSchema.pre('save', function (next) {

@@ -4,7 +4,8 @@ var TripItems = require('../models/tripItem.js');
 var request = require('request');
 var key = require('../env/config');
 var async = require('async');
-var yelp = require('../env/yelp').yelp
+var yelp = require('../env/yelp').yelp;
+var User = require('./userController');
 
 var filterTripData = function(responseObj) {
   return responseObj.reduce(function(totalData, item) {
@@ -163,6 +164,9 @@ module.exports = {
       if (err) {
         console.log(err);
       }
+      //console.log('about to create playlist', results, 'user', req.user.username);
+      //add created trip id to users trips array
+      User.addTrip(req.user.username, results._id);
       res.json(results);
     });
   },

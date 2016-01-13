@@ -43,6 +43,7 @@ module.exports = function(app, express) {
         //console.log('IG profile', profile);
         //console.log('token', accessToken);
         userController.storeUser(profile, accessToken);
+        profile.token = accessToken;
         return done(null, profile);
       });
     }
@@ -52,14 +53,15 @@ module.exports = function(app, express) {
   app.get('/auth/instagram/callback',
     passport.authenticate('instagram', { failureRedirect: '/login' }),
     function(req, res) {
-      //console.log('logged in user', req.user);
+      console.log('logged in user', req.user);
       res.redirect('/#');
     });
 
  //###### Live but not used in production############
-  app.get('/api/user/*', userController.findUser);
-  app.put('/api/user/*', userController.addTrips);
-  app.get('/api/user/trips/*', userController.findAllUserTrips);
+  //app.get('/api/user/*', userController.findUser);
+  app.get('/api/ig', userController.fetchIGPhotos);
+  //app.put('/api/user/*', userController.addTrips);
+  //app.get('/api/user/trips/*', userController.findAllUserTrips);
 
 
   //############Pending Routes#####################
