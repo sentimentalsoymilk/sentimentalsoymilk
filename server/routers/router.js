@@ -2,6 +2,8 @@ var controller = require('../controllers/controller.js');
 var userController = require('../controllers/userController.js');
 var dbController = require('../models/dbroutes.js');
 var passport = require('passport');
+var InstagramStrategy = require('passport-instagram').Strategy;
+var keys = require('../env/config');
 
 module.exports = function(app, express) {
 
@@ -17,11 +19,40 @@ module.exports = function(app, express) {
   app.post('/trips', controller.createTrip);
   app.get('/trips/:id', controller.accessTrip);
   app.get('/trips', controller.getAllTrips);
+
+  passport.serializeUser(function(user, done) {
+    done(null, user);
+  });
+
+  passport.deserializeUser(function(user, done) {
+    done(null, user);
+  });
+
+  passport.use(new InstagramStrategy({
+      clientID: keys.INSTAGRAM_CLIENT_ID,
+      clientSecret: keys.INSTAGRAM_CLIENT_SECRET,
+      callbackURL: 'http://localhost:8080/auth/instagram/callback'
+    },
+    function(accessToken, refreshToken, profile, done) {
+      // asynchronous verification, for effect...
+      process.nextTick(function () {
+        // To keep the example simple, the user's Instagram profile is returned to
+        // represent the logged-in user.  In a typical application, you would want
+        // to associate the Instagram account with a user record in your database,
+        // and return that user instead.
+        //console.log('IG profile', profile);
+        //console.log('token', accessToken);
+        userController.storeUser(profile, accessToken);
+        return done(null, profile);
+      });
+    }
+  ));
+
   app.get('/auth/instagram', passport.authenticate('instagram'));
   app.get('/auth/instagram/callback',
     passport.authenticate('instagram', { failureRedirect: '/login' }),
     function(req, res) {
-      console.log('logged in user', req.user);
+      //console.log('logged in user', req.user);
       res.redirect('/#');
     });
 
