@@ -9,8 +9,6 @@ var yelp = Yelp.createClient({
   }
 })
 
-// console.log(yelp.search)
-
 exports.yelp = yelp
 
 

@@ -6,19 +6,6 @@ var key = require('../env/config');
 var async = require('async');
 var yelp = require('../env/yelp').yelp
 
-yelp.search({
-  term: "Activity",
-  location: "San Francisco"
-}).then(function (data) {
-  console.log(data.businesses[0].categories)
-}).catch(function (err) {
-  if (err.type === yelp.errorTypes.areaTooLarge) {
-    console.log(err)
-  } else if (err.type === yelp.errorTypes.unavailableForLocation) {
-    console.log(err)
-  }
-});
-
 var filterTripData = function(responseObj) {
   return responseObj.reduce(function(totalData, item) {
     var location = item.venue.location;
@@ -45,17 +32,27 @@ var filterTripData = function(responseObj) {
 // Accepts the decoded request url, reformats it and
 // returns a string of the city name
 var parseCityName = function(cityRequest) {
-    var cityLowercase = cityRequest.split(',')[0];
-    var city = '';
-    if (cityLowercase.indexOf(' ') > 0) {
-      var splitCity = cityLowercase.split(' ');
-      var firstCityHalf = splitCity[0][0].toUpperCase() + splitCity[0].slice(1);
-      var secondCityHalf = splitCity[1][0].toUpperCase() + splitCity[1].slice(1);
-      city += firstCityHalf + ' ' + secondCityHalf;
-    } else {
-      city += cityLowercase[0].toUpperCase() + cityLowercase.slice(1);
-    }
-    return city;
+  var cityRequest = cityRequest.split(',');
+  // var cityLowercase = cityRequest[0]
+  var stateCountry = cityRequest[1]
+  var location = handleSplitNames(cityRequest[0])
+  if(cityRequest[1]){
+    location += ", " + handleSplitNames(cityRequest[1])
+  }
+  return location;
+}
+//checks and formats names such as San Francisco and United States
+var handleSplitNames = function(name){
+  var parsedName = ''
+  if (name.indexOf(' ') > 0) {
+    var splitName = name.split(' ');
+    var firstNameHalf = splitName[0][0].toUpperCase() + splitName[0].slice(1);
+    var secondNameHalf = splitName[1][0].toUpperCase() + splitName[1].slice(1);
+    parsedName += firstNameHalf + ' ' + secondNameHalf;
+  } else {
+    parsedName += name[0].toUpperCase() + name.slice(1);
+  }
+  return parsedName;
 }
 
 module.exports = {
@@ -68,25 +65,27 @@ module.exports = {
   // Method: GET
   // Route : /activities/*'
 
-  searchStoredData: function(req, res, next) {
-    var city = parseCityName(decodeURI(req.url.split('/')[2]));
-    console.log(city);
-    TripItems.find({ city: city }, function(err, list) {
-      if (list.length < 1) {
-        // if (list.length < 1) {
-        // City not cached; fetching data
-        console.log("City not cached; fetching data");
-        next();
-      }
-      else if (!err) {
-        // Pulling list from DB
-        console.log("Pulling list from DB");
-        res.send(list);
-      } else {
-        res.send(err);
-      }
-    });
-  },
+  //this function is deprecated as storing changing information
+  //is not ideal
+  // searchStoredData: function(req, res, next) {
+  //   var city = parseCityName(decodeURI(req.url.split('/')[2]));
+  //   console.log(city);
+  //   TripItems.find({ city: city }, function(err, list) {
+  //     if (list.length < 1) {
+  //       // if (list.length < 1) {
+  //       // City not cached; fetching data
+  //       console.log("City not cached; fetching data");
+  //       next();
+  //     }
+  //     else if (!err) {
+  //       // Pulling list from DB
+  //       console.log("Pulling list from DB");
+  //       res.send(list);
+  //     } else {
+  //       res.send(err);
+  //     }
+  //   });
+  // },
 
   //<h4> fetchCityData </h4>
   // Fetches data from the Foursquare API if the data is not
@@ -94,25 +93,41 @@ module.exports = {
   // Method: GET
   // Route : /activities/*'
 
-  //don't need to store data, poor design choice
-  fetchCityData: function(req, res, next) {
-    var cityState = req.url.split('/')[2];
-    return request('https://api.foursquare.com/v2/venues/explore?client_id='+key.API+'&client_secret='+key.SECRET+'&v=20130815&near='+cityState+'&venuePhotos=1', function(err, response, body) {
-      // prevent server crashing when responseObj is undefined
-      if (!err && JSON.parse(body).meta.code === 200) {
-        var filteredResults = filterTripData(JSON.parse(body).response.groups[0].items);
-        module.exports.saveCityData(filteredResults).then(function(results, err) {
-          if (err) {
-            res.send(err);
-          }
-        res.send(JSON.stringify(results));
-        });
-      } else {
-        res.status(400).send(err);
-      }
+  //works for the foursquare api
+  // fetchCityData: function(req, res, next) {
+  //   var cityState = req.url.split('/')[2];
+  //   return request('https://api.foursquare.com/v2/venues/explore?client_id='+key.API+'&client_secret='+key.SECRET+'&v=20130815&near='+cityState+'&venuePhotos=1', function(err, response, body) {
+  //     // prevent server crashing when responseObj is undefined
+  //     if (!err && JSON.parse(body).meta.code === 200) {
+  //       var filteredResults = filterTripData(JSON.parse(body).response.groups[0].items);
+  //       module.exports.saveCityData(filteredResults).then(function(results, err) {
+  //         if (err) {
+  //           res.send(err);
+  //         }
+  //       res.send(JSON.stringify(results));
+  //       });
+  //     } else {
+  //       res.status(400).send(err);
+  //     }
+  //   });
+  // },
+
+  //<h4></h4>
+
+  fetchCityData: function(req, res){
+    var cityState = parseCityName(decodeURI(req.url.split('/')[2]))
+    console.log(cityState)
+    var term = req.body.searchTerm
+    yelp.search({
+      term: term || "Activity",
+      location: cityState
+    }).then(function (data) {
+      console.log(data.businesses[0].location)
+      res.send(JSON.stringify(data.businesses))
+    }).catch(function (err) {
+      res.status(400).send(err);
     });
   },
-
 
   //<h4>  saveCityData </h4>
   // Adds the searched city to the database
