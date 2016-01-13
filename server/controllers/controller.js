@@ -133,11 +133,10 @@ module.exports = {
   // Gets the weather report for the location specified 
   // at the time specified 
   fetchWeatherData: function (req, res, next) {
-<<<<<<< 96a8d82130d8966bbae7a3d85f09953510dad715
-    request('https://api.forecast.io/forecast/c1886414ac678c908104c2a20e4874c5/37.783583,-122.409063,2016-01-13T12:00:00', function (err, response, body) {
-=======
-    request('https://api.forecast.io/forecast/c1886414ac678c908104c2a20e4874c5/37.783583,-122.409063,2016-01-12T12:00:00', function (err, response, body) {
->>>>>>> Add weather button and hook it up to forecast.io api
+    var urlParts = req.url.split('/');
+    var lat = urlParts[3];
+    var lon = urlParts[4]
+    request('https://api.forecast.io/forecast/c1886414ac678c908104c2a20e4874c5/'+lat+','+lon+',2016-01-13T12:00:00', function (err, response, body) {
       if (!err) {
         res.send(body);
       }
