@@ -104,6 +104,10 @@
               <a href="{{activity.url}}" target="_blank">Website</a>
               <div class='weatherButton' ng-show="!activity.weather" ng-click='getWeather(activity)'>
                   <button class="btn btn-success">Get the Weather</button>
+              <div class='weatherButton' ng-show="!activity.weather">
+                <form action = "/api/weather">
+                  <button class="btn btn-success">Get the Weather</button>
+                </form>
               </div>
               <div class='weather' ng-show='activity.weather'>
 
