@@ -28,9 +28,24 @@ angular.module('app.create', ['app.services'])
           // $scope.activities is an array of all the activities found by the api
           // at the given destination
           $scope.activities = data;
+          console.log($scope.activities)
         });
-    }
+      }
   };
+
+  $scope.getWeather = function (activity) {
+    console.log(activity.location)
+    var lat = activity.location.coordinate.latitude;
+    var lon = activity.location.coordinate.longitude;
+    $http.get('/api/weather/'+lat+'/'+lon)
+      .success(function (data) {
+        activity.weather = {};
+        activity.weather.max = data.daily.data[0].temperatureMax;
+        activity.weather.min = data.daily.data[0].temperatureMin;
+        activity.weather.summary = data.daily.data[0].summary;
+        console.log(activity.weather)
+      }) 
+  }
 
   // $scope.itinerary is an emtpy array that will contain all the activities the user will add
   // to their trip

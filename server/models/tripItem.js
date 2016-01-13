@@ -8,7 +8,8 @@ var tripsItemsSchema = mongoose.Schema({
   category: String,
   rating: String,
   photo: String,
-  url: String
+  url: String,
+  weather: {}
 });
 
 var TripItem = mongoose.model('TripItem', tripsItemsSchema);

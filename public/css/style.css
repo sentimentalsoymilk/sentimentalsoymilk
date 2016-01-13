@@ -34,6 +34,12 @@ li.itineraies-li {
 .logout-button {
   float: right;
 }
+.login-container {
+  margin: 0 auto;
+  width: 400px;
+  height: 200px;
+  text-align: center;
+}
 .navigation {
   height: 50px;
 }
@@ -210,6 +216,15 @@ body, html {
 
 #title {
   float :right;
+}
+
+.addActivityImage
+{
+  box-shadow: 10px 10px;
+}
+
+.yelpLink{
+  margin-left: 150px
 }
 
 .vote {

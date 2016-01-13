@@ -1,12 +1,11 @@
-<div class="login-container">
+<div class="login-container jumbotron">
 
-  <h3>Login:</h3>
+  <h3>Please Login:</h3>
   <form>
-    <input type="text" placeholder="username" ng-model="username">
-    <input type="password" placeholder="password" ng-model="password">
-    <button ng-click="login()">Login</button>
+    <!-- <input type="text" placeholder="username" ng-model="username" disabled="true">
+    <input type="password" placeholder="password" ng-model="password" disabled="true">
+    <button ng-click="login()">Login</button> -->
   </form>
   <h4> {{ error }} </h4>
-  <p>Not a member? <a href="/#signup">Signup here</a></p>
-  
+  <a ng-href="/auth/instagram"><button class="btn btn-primary btn-lg" >Instagram   <span class="glyphicon glyphicon-camera"></span></button></a>
 </div>

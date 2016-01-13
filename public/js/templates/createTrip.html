@@ -66,8 +66,7 @@
           <li class="foursquare-li li-remove" ng-repeat="activity in itinerary track by $index">
             <div class="row">
               <p><strong>{{activity.name}}</strong></p>
-              <p>{{activity.address.split(',')[0]}}</p>
-              <p>{{activity.category}}</p>
+              <p>{{activity.location.display_address.join(", ")}}</p>
               <span id="remove-button" class="glyphicon glyphicon-remove" ng-click="removeFromTrip()"></span>
               <!-- <button id="remove-button" class="btn btn-danger glyphicon glyphicon-remove" ng-click="removeFromTrip()"></button> -->
             </div>
@@ -90,15 +89,25 @@
     <h4>Activities</h4>
     <div class="activitylist-right">
       <ul ng-show="formCompleted">
-        <li class="foursquare-li li-add" ng-repeat="activity in activities | orderBy:'-rating'">
+        <li class="foursquare-li li-add" ng-repeat="activity in activities | orderBy:'-review_count'">
           <div class="row" ng-click="addToTrip()">
-              <img class="addActivityImage" src="{{activity.photo}}" alt="">
+              <img class="addActivityImage" src="{{activity.image_url}}" alt="">
               <p><strong>{{activity.name}}</strong></p>
+              <p>{{activity.location.display_address.join(", ")}}</p>
+              <p>{{activity.rating}}/5</p>
+              <p><img src="{{activity.rating_img_url}}"></p>
+              <p>Has been reviewed {{activity.review_count}} times</p>
+              <p class = "yelpLink"><a href="{{activity.url}}">Yelp Page</a></p>
               <p>{{activity.address.split(',')[0]}}</p>
               <p>{{activity.category}}</p>
               <p>{{activity.rating}}/10</p>
               <a href="{{activity.url}}" target="_blank">Website</a>
-              <!-- <button class="btn btn-success" ng-click="addToTrip()">Add</button> -->
+              <div class='weatherButton' ng-hide="activity.weather" ng-click='getWeather(activity)'>
+                  <button class="btn btn-success">Get the Weather</button>
+              </div>
+              <div class='weather' ng-show='activity.weather'>
+                <p>{{activity.weather.summary}}<p>
+              </div>
           </div>
         </li>
       </ul>

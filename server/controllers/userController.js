@@ -6,7 +6,7 @@ var request = require('request');
 var bluebird = require('bluebird');
 
 module.exports = {
-  
+
   authCheck : function(req, res, next){
     if(req.isAuthenticated()) { return next(); }
     res.redirect('/login');
@@ -35,7 +35,7 @@ module.exports = {
             console.log("Created user", results)
             return results;
           }
-        }) 
+        })
         .then(function(result){
           req.session.user = username;
           console.log("User created by SignUp");
@@ -43,6 +43,56 @@ module.exports = {
         })
       }
     })
+  },
+
+  storeUser: function(igProfile, token) {
+    var userObj = {};
+
+    userObj.id = igProfile.id;
+    userObj.image = igProfile._json.data.profile_picture;
+    userObj.username = igProfile.username;
+    userObj.token = token;
+
+    //console.log('userobj', userObj);
+
+    User.find({id: igProfile.id}, function(err, success) {
+      if (err) {
+        console.log('user already exists', err);
+      } else {
+        return success;
+      }
+    })
+    .then(function(success) {
+      if (success.length !== 0) {
+        console.log('sending back found user', success);
+        //res.send(success);
+      } else {
+        User.create(userObj, function(err, results) {
+          if (err) {
+            console.log('Error creating user', err);
+          } else {
+            console.log('Created user', results);
+            return results;
+          }
+        });
+        // .then(function(result) {
+        //   req.session.user = username;
+        //   console.log("User created by SignUp");
+        //   res.send(result);
+        // });
+      }
+    });
+  },
+
+  fetchIGPhotos: function(req, res, next) {
+    console.log('req user', req.user.token);
+    var token = req.user.token;
+    var igURL = 'https://API.instagram.com/v1/locations/search?lat=48.858844&lng=2.294351&access_token='+ token;
+    request(igURL, function(err, response, body) {
+      res.send(body);
+      console.log(body);
+    });
+    //res.status(200).send();
   },
 
   login : function(req, res, next) {
@@ -71,26 +121,26 @@ module.exports = {
       }
     });
   },
-  findUser: function(req, res, next) {
-    var username = req.url.split('/')[3]
-    User.findOne({username:username},function(err, result){
-      if (err) {
-        console.log("Error finding username:", err);
-      } else {
-        console.log("Found:", result)
-        res.send(result);
-      }
-    });
-  },
+  // findUser: function(req, res, next) {
+  //   var username = req.url.split('/')[3]
+  //   User.findOne({username:username},function(err, result){
+  //     if (err) {
+  //       console.log("Error finding username:", err);
+  //     } else {
+  //       console.log("Found:", result)
+  //       res.send(result);
+  //     }
+  //   });
+  // },
 
   findAllUserTrips: function(req, res, next) {
     console.log("userID", req);
     var userId = req.url.split('/')[4];
     var myTrips = [];
     User.findById({ _id: userId }, function(err, user) {
-      if (err) { 
+      if (err) {
         console.log("findById error", err)
-        return err; 
+        return err;
       } else {
         console.log("findbyID Results", trip);
         return user;
@@ -108,7 +158,7 @@ module.exports = {
             if(tripLength === myTrips.length){
               console.log("myTrip:", myTrips)
               res.send(myTrips);
-            } 
+            }
           }
         });
       });
@@ -118,25 +168,35 @@ module.exports = {
   // findOneUserTrip): function(req, res, next) {
   // },
 
-  addTrips : function(req, res, next) {
-    var userId = req.url.split('/')[3];
-    User.findById({ _id: userId },function(err, result){
+  // addTrips : function(req, res, next) {
+  //   var userId = req.url.split('/')[3];
+  //   User.findById({ _id: userId },function(err, result){
+  //     if (err) {
+  //       console.log("Error finding username:", err);
+  //     } else {
+  //       var newTrips = req.body.trips;
+  //       var currentTrips = result.trips;
+  //       newTrips.forEach(function(trip){
+  //         currentTrips.push(trip);
+  //       })
+  //       result.trips = currentTrips;
+  //       result.save(function(err) {
+  //         if (err) {
+  //           console.log(err);
+  //         }
+  //         res.send(result);
+  //       });
+  //     }
+  //   });
+  // },
+
+  addTrip: function(user, id) {
+    return User.findOne({username: user}, function(err, foundUser) {
       if (err) {
-        console.log("Error finding username:", err);
-      } else {
-        var newTrips = req.body.trips;
-        var currentTrips = result.trips;
-        newTrips.forEach(function(trip){
-          currentTrips.push(trip);
-        })
-        result.trips = currentTrips;
-        result.save(function(err) {
-          if (err) {
-            console.log(err);
-          }
-          res.send(result);
-        });       
+        return err;
       }
+      foundUser.trips.push(id);
+      foundUser.save();
     });
   },
 
@@ -146,4 +206,3 @@ module.exports = {
   }
 };
 
-     
