@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "test",
-    "start": "node server/server.js",
+    "start": "nodemon server/server.js",
     "postinstall": "bower install"
   },
   "keywords": [
@@ -24,6 +24,7 @@
     "express-session": "^1.12.1",
     "mongoose": "^4.3.4",
     "morgan": "^1.6.1",
+    "node-yelp": "0.0.3",
     "nodemon": "^1.8.1",
     "passport": "^0.3.2",
     "passport-instagram": "^1.0.0",

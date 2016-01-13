@@ -1,0 +1,16 @@
+
+
+yelp api
+
+Consumer Key	ugrWCABQsMX62effNn12-Q
+Consumer Secret	reY43FTjgvuhilFAqzVTERE_LAc
+Token	MEBOhmsmrSXiTO6CsuDQ0REcq69joRCm
+Token Secret	wVeYdRfBcvWQTXbOPl22O5N2R8g
+Generate new API v2.0 token/secret
+
+oauth_consumer_key	Your OAuth consumer key (from Manage API Access).
+oauth_token	The access token obtained (from Manage API Access).
+oauth_signature_method	hmac-sha1
+oauth_signature	The generated request signature, signed with the oauth_token_secret obtained (from Manage API Access).
+oauth_timestamp	Timestamp for the request in seconds since the Unix epoch.
+oauth_nonce	A unique string randomly generated per request.
