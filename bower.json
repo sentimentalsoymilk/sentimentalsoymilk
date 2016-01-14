@@ -1,16 +1,16 @@
 {
-  "name": "Greenfield",
+  "name": "spotifynd",
   "description": "Itinerary",
   "main": "index.js",
   "authors": [
-    "Justin, Tessa, Liza, Josh"
+    "Justin, Tessa, Liza, Josh, Devin, Dan, Zach, Marlon"
   ],
   "license": "MIT",
   "private": true,
   "keywords": [
     "angular"
   ],
-  "homepage": "https://github.com/sentimentalsoymilk/sentimentalsoymilk",
+  "homepage": "https://github.com/fearlessgerbil/spotifynd",
   "moduleType": [],
   "ignore": [
     "**/.*",
@@ -26,6 +26,8 @@
     "angular-animate": "~1.4.8",
     "underscore": "~1.8.3",
     "angular-mocks": "~1.4.8",
-    "bootstrap": "~3.3.6"
+    "bootstrap": "~3.3.6",
+    "angular-material": "~1.0.1",
+    "angular-scroll-glue": "~2.0.6"
   }
 }
