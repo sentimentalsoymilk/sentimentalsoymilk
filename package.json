@@ -4,7 +4,6 @@
   "description": "itinerary generator",
   "main": "server.js",
   "scripts": {
-    "test": "test",
     "start": "node server/server.js",
     "postinstall" : "bower install"
   },
